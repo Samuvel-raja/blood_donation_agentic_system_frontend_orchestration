@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkflowsRouteImport } from './routes/workflows'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as DonorsRouteImport } from './routes/donors'
@@ -21,6 +22,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const WorkflowsRoute = WorkflowsRouteImport.update({
   id: '/workflows',
   path: '/workflows',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RequestsRoute = RequestsRouteImport.update({
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/donors': typeof DonorsRoute
   '/monitoring': typeof MonitoringRoute
   '/requests': typeof RequestsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/workflows': typeof WorkflowsRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/donors': typeof DonorsRoute
   '/monitoring': typeof MonitoringRoute
   '/requests': typeof RequestsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/workflows': typeof WorkflowsRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/donors': typeof DonorsRoute
   '/monitoring': typeof MonitoringRoute
   '/requests': typeof RequestsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/workflows': typeof WorkflowsRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/donors'
     | '/monitoring'
     | '/requests'
+    | '/sitemap.xml'
     | '/workflows'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/donors'
     | '/monitoring'
     | '/requests'
+    | '/sitemap.xml'
     | '/workflows'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/donors'
     | '/monitoring'
     | '/requests'
+    | '/sitemap.xml'
     | '/workflows'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   DonorsRoute: typeof DonorsRoute
   MonitoringRoute: typeof MonitoringRoute
   RequestsRoute: typeof RequestsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WorkflowsRoute: typeof WorkflowsRoute
 }
 
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/workflows'
       fullPath: '/workflows'
       preLoaderRoute: typeof WorkflowsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/requests': {
@@ -203,6 +223,7 @@ const rootRouteChildren: RootRouteChildren = {
   DonorsRoute: DonorsRoute,
   MonitoringRoute: MonitoringRoute,
   RequestsRoute: RequestsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   WorkflowsRoute: WorkflowsRoute,
 }
 export const routeTree = rootRouteImport
