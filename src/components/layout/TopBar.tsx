@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Bell, Command, Search } from "lucide-react";
 
 export function TopBar() {
@@ -31,9 +32,12 @@ export function TopBar() {
           <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-crimson shadow-glow-crimson" />
         </button>
 
-        <button className="rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background transition-opacity hover:opacity-90">
+        <Link
+          to="/workflows"
+          className="rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background transition-opacity hover:opacity-90"
+        >
           + New Emergency
-        </button>
+        </Link>
       </div>
     </header>
   );

@@ -25,7 +25,17 @@ const colors: Record<Event["level"], string> = {
   err: "text-crimson",
 };
 
-export function EventStream({ title = "Event Stream", compact = false }: { title?: string; compact?: boolean }) {
+export function EventStream({
+  title = "Event Stream",
+  compact = false,
+  events: liveEvents,
+}: {
+  title?: string;
+  compact?: boolean;
+  events?: Event[];
+}) {
+  const displayEvents = liveEvents?.length ? liveEvents : events;
+
   return (
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-border bg-surface">
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
@@ -39,7 +49,7 @@ export function EventStream({ title = "Event Stream", compact = false }: { title
       </div>
       <div className="flex-1 overflow-y-auto scrollbar-thin px-4 py-3 font-mono text-[11px]">
         <ul className="space-y-3">
-          {events.map((e, i) => (
+          {displayEvents.map((e, i) => (
             <li key={i} className="flex gap-3 animate-ticker" style={{ animationDelay: `${i * 30}ms` }}>
               <span className="shrink-0 text-muted-foreground/70 tabular-nums">{e.time}</span>
               <span className={`shrink-0 font-semibold ${colors[e.level]}`}>[{e.tag}]</span>

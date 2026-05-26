@@ -1,34 +1,52 @@
 import { Phone, MessageCircle, Mail } from "lucide-react";
+import type { UserJson } from "@/lib/api/users";
 
 export type Donor = {
   id: string;
   name: string;
   initials: string;
   group: string;
-  aiScore: number;
-  reliability: number;
-  responseRate: number;
-  lastDonationDays: number;
-  donations: number;
-  distanceKm: number;
-  status: "available" | "busy" | "cooldown";
-  channels: ("sms" | "wa" | "email")[];
+  status: "available" | "cooldown";
+  roles?: string[];
+  mobile?: string;
+  email?: string;
 };
 
 export const donors: Donor[] = [
-  { id: "9942-X", name: "Marcus Thorne", initials: "MT", group: "O−", aiScore: 9.8, reliability: 98, responseRate: 94, lastDonationDays: 92, donations: 14, distanceKm: 2.4, status: "available", channels: ["wa", "sms"] },
-  { id: "2210-Y", name: "Elena Rodriguez", initials: "ER", group: "O−", aiScore: 9.4, reliability: 92, responseRate: 88, lastDonationDays: 110, donations: 9, distanceKm: 4.1, status: "available", channels: ["wa", "email"] },
-  { id: "8821-K", name: "Samir Kapoor", initials: "SK", group: "AB+", aiScore: 9.1, reliability: 88, responseRate: 81, lastDonationDays: 64, donations: 6, distanceKm: 6.7, status: "available", channels: ["wa", "sms", "email"] },
-  { id: "4471-L", name: "Naomi Chen", initials: "NC", group: "B+", aiScore: 8.7, reliability: 84, responseRate: 79, lastDonationDays: 200, donations: 12, distanceKm: 3.9, status: "busy", channels: ["email"] },
-  { id: "1093-Q", name: "Julian Vane", initials: "JV", group: "A−", aiScore: 8.4, reliability: 79, responseRate: 71, lastDonationDays: 41, donations: 4, distanceKm: 9.2, status: "cooldown", channels: ["wa"] },
-  { id: "7758-D", name: "Priya Anand", initials: "PA", group: "O+", aiScore: 8.2, reliability: 77, responseRate: 75, lastDonationDays: 150, donations: 8, distanceKm: 5.5, status: "available", channels: ["sms", "wa"] },
+  { id: "9942-X", name: "Marcus Thorne", initials: "MT", group: "O-", status: "available", roles: ["donor"] },
+  { id: "2210-Y", name: "Elena Rodriguez", initials: "ER", group: "O-", status: "available", roles: ["donor"] },
+  { id: "8821-K", name: "Samir Kapoor", initials: "SK", group: "AB+", status: "available", roles: ["donor"] },
+  { id: "4471-L", name: "Naomi Chen", initials: "NC", group: "B+", status: "available", roles: ["donor"] },
+  { id: "1093-Q", name: "Julian Vane", initials: "JV", group: "A-", status: "cooldown", roles: ["donor"] },
+  { id: "7758-D", name: "Priya Anand", initials: "PA", group: "O+", status: "available", roles: ["donor"] },
 ];
 
 const statusDot: Record<Donor["status"], string> = {
   available: "bg-success",
-  busy: "bg-warning",
   cooldown: "bg-muted-foreground/40",
 };
+
+function initialsFromName(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]!.toUpperCase())
+    .join("");
+}
+
+export function donorFromUser(u: UserJson): Donor {
+  return {
+    id: u.id,
+    name: u.name,
+    initials: initialsFromName(u.name),
+    group: u.blood_group,
+    status: u.status === "active" ? "available" : "cooldown",
+    roles: u.roles,
+    mobile: u.mobile,
+    email: u.email,
+  };
+}
 
 export function DonorCard({ d }: { d: Donor }) {
   return (
@@ -46,7 +64,7 @@ export function DonorCard({ d }: { d: Donor }) {
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{d.name}</p>
             <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-              ID {d.id} · {d.distanceKm}km away
+              ID {d.id}{d.roles?.length ? ` · ${d.roles.join(", ")}` : ""}
             </p>
           </div>
           <span className="inline-flex items-center rounded-md border border-border bg-background px-1.5 py-0.5 font-mono text-[11px] font-semibold">
@@ -54,32 +72,11 @@ export function DonorCard({ d }: { d: Donor }) {
           </span>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-3">
-          <Stat label="AI Score" value={d.aiScore.toFixed(1)} accent="intel" />
-          <Stat label="Reliability" value={`${d.reliability}%`} bar={d.reliability} barColor="success" />
-          <Stat label="Response" value={`${d.responseRate}%`} bar={d.responseRate} barColor="intel" />
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-4 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-          <div>
-            <p className="text-foreground/90 font-sans text-xs normal-case tracking-normal">
-              {d.lastDonationDays}d ago
-            </p>
-            <p>last donation</p>
-          </div>
-          <div className="text-right">
-            <p className="text-foreground/90 font-sans text-xs normal-case tracking-normal">
-              {d.donations} lifetime
-            </p>
-            <p>donations</p>
-          </div>
-        </div>
-
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            {d.channels.includes("wa") && <Chan icon={MessageCircle} />}
-            {d.channels.includes("sms") && <Chan icon={Phone} />}
-            {d.channels.includes("email") && <Chan icon={Mail} />}
+            {d.mobile ? <Chan icon={Phone} /> : null}
+            {d.email ? <Chan icon={Mail} /> : null}
+            <Chan icon={MessageCircle} />
           </div>
           <button className="rounded-md border border-border bg-background px-2.5 py-1 text-[11px] font-medium hover:bg-accent">
             Dispatch →

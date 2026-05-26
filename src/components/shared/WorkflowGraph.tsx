@@ -1,19 +1,35 @@
+import {
+  workflowNodeStates,
+  type WorkflowNodeId,
+} from "@/lib/workflow-progress";
+
 type NodeState = "done" | "active" | "pending" | "error";
 
-const nodes = [
-  { id: "intake", label: "Intake", code: "IN", state: "done" as NodeState },
-  { id: "verify", label: "Hospital Verify", code: "VR", state: "done" as NodeState },
-  { id: "search", label: "Donor Search", code: "DS", state: "active" as NodeState },
-  { id: "batch", label: "Batch Select", code: "BS", state: "pending" as NodeState },
-  { id: "notify", label: "Notify Dispatch", code: "ND", state: "pending" as NodeState },
-  { id: "wait", label: "Wait For Reply", code: "WR", state: "pending" as NodeState },
-  { id: "decide", label: "Decision Router", code: "DR", state: "pending" as NodeState },
-  { id: "done", label: "Completion", code: "OK", state: "pending" as NodeState },
+const nodes: { id: WorkflowNodeId; label: string; code: string }[] = [
+  { id: "intake", label: "Intake", code: "IN" },
+  { id: "verify", label: "Hospital Verify", code: "VR" },
+  { id: "search", label: "Donor Search", code: "DS" },
+  { id: "batch", label: "Batch Select", code: "BS" },
+  { id: "notify", label: "Notify Dispatch", code: "ND" },
+  { id: "wait", label: "Wait For Reply", code: "WR" },
+  { id: "decide", label: "Decision Router", code: "DR" },
+  { id: "done", label: "Completion", code: "OK" },
 ];
 
-export function WorkflowGraph({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl border border-border bg-surface">
+const defaultStates = workflowNodeStates("search");
+
+export function WorkflowGraph({
+  compact = false,
+  requestId,
+  activeNode = "search",
+}: {
+  compact?: boolean;
+  requestId?: string;
+  activeNode?: WorkflowNodeId;
+}) {
+  const nodeStates = workflowNodeStates(activeNode);
+
+  return (    <div className="relative h-full w-full overflow-hidden rounded-xl border border-border bg-surface">
       <div className="absolute inset-0 grid-bg opacity-60" />
       <div
         className="pointer-events-none absolute inset-0"
@@ -24,7 +40,7 @@ export function WorkflowGraph({ compact = false }: { compact?: boolean }) {
         <div className="flex items-center justify-between">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Orchestration graph · Request #PXR-9024
+              Orchestration graph · Request {requestId ? `#${requestId.slice(0, 8)}` : "—"}
             </p>
             <h3 className="mt-1 text-base font-semibold">Live workflow execution</h3>
           </div>
@@ -43,7 +59,13 @@ export function WorkflowGraph({ compact = false }: { compact?: boolean }) {
 
           <div className="relative z-10 flex w-full items-center justify-between">
             {nodes.map((n) => (
-              <Node key={n.id} {...n} compact={compact} />
+              <Node
+                key={n.id}
+                label={n.label}
+                code={n.code}
+                state={nodeStates[n.id] ?? defaultStates[n.id]}
+                compact={compact}
+              />
             ))}
           </div>
         </div>
