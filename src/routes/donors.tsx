@@ -27,6 +27,11 @@ function DonorsPage() {
   const query = useQuery({
     queryKey: ["usersbybloodgroup", selectedGroup ?? ""],
     queryFn: () => usersByBloodGroup(selectedGroup),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+    retry: false,
   });
 
   const donors: Donor[] = useMemo(
