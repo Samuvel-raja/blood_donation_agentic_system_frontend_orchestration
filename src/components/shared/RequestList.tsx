@@ -12,14 +12,6 @@ export type Request = {
   distanceKm: number;
 };
 
-export const requests: Request[] = [
-  { id: "PXR-9024", hospital: "St. Jude Medical Center", group: "O−", units: { secured: 6, required: 10 }, sla: "04:12", confidence: 94, priority: "critical", distanceKm: 3.2 },
-  { id: "PXR-9023", hospital: "Mercy Central Trauma", group: "AB+", units: { secured: 2, required: 4 }, sla: "12:48", confidence: 88, priority: "critical", distanceKm: 5.8 },
-  { id: "PXR-9022", hospital: "Oakwood Pediatric", group: "B+", units: { secured: 3, required: 5 }, sla: "18:55", confidence: 81, priority: "urgent", distanceKm: 8.1 },
-  { id: "PXR-9021", hospital: "Northside Trauma Wing", group: "A−", units: { secured: 1, required: 6 }, sla: "32:10", confidence: 72, priority: "urgent", distanceKm: 11.4 },
-  { id: "PXR-9020", hospital: "Lakeview General", group: "O+", units: { secured: 4, required: 4 }, sla: "—", confidence: 99, priority: "normal", distanceKm: 2.1 },
-];
-
 export function RequestRow({ r }: { r: Request }) {
   const pct = Math.round((r.units.secured / r.units.required) * 100);
   return (
@@ -86,7 +78,8 @@ export function RequestRow({ r }: { r: Request }) {
   );
 }
 
-export function RequestList() {
+export function RequestList({ requests }: { requests?: Request[] }) {
+  const items = requests ?? [];
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-surface">
       <div className="grid grid-cols-12 gap-4 border-b border-border bg-background/40 px-5 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
@@ -97,7 +90,11 @@ export function RequestList() {
         <div className="col-span-2 text-right">AI Confidence</div>
       </div>
       <div className="divide-y divide-border">
-        {requests.map((r) => <RequestRow key={r.id} r={r} />)}
+        {items.length === 0 ? (
+          <p className="px-5 py-8 text-center text-sm text-muted-foreground">No requests yet.</p>
+        ) : (
+          items.map((r) => <RequestRow key={r.id} r={r} />)
+        )}
       </div>
     </div>
   );

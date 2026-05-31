@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth-context";
 import {
   LayoutDashboard,
   Siren,
@@ -8,7 +9,7 @@ import {
   BarChart3,
   MessagesSquare,
   ShieldCheck,
-  Settings,
+  LogOut,
 } from "lucide-react";
 
 const ops = [
@@ -27,9 +28,20 @@ const systems = [
 
 export function Sidebar() {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const { user, logout } = useAuth();
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? path === to : path === to || path.startsWith(to + "/");
+
+  const initials = user?.name
+    ? user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "??";
+
+  const roleLabel = user?.roles?.includes("admin")
+    ? "Administrator"
+    : user?.roles?.includes("recipient")
+      ? "Recipient"
+      : "Donor";
 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
@@ -63,17 +75,23 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-sidebar-border p-3">
-        <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-sidebar-accent">
+        <div className="flex items-center gap-3 rounded-lg p-2 transition-colors">
           <div className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-crimson to-crimson-glow text-xs font-semibold text-white">
-            ST
+            {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">Dr. Sarah Thorne</p>
+            <p className="truncate text-sm font-medium">{user?.name ?? "User"}</p>
             <p className="truncate font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-              L4 Admin · CMO
+              {roleLabel}
             </p>
           </div>
-          <Settings className="size-4 text-muted-foreground" />
+          <button
+            onClick={logout}
+            className="grid size-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-crimson"
+            title="Sign out"
+          >
+            <LogOut className="size-4" />
+          </button>
         </div>
       </div>
     </aside>

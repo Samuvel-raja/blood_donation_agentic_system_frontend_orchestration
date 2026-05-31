@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { KpiCard } from "@/components/shared/KpiCard";
 import { RequestList } from "@/components/shared/RequestList";
-import { DonorCard, donors } from "@/components/shared/DonorCard";
 import { ArrowRight, Siren, Users, Workflow } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -46,10 +45,10 @@ function Dashboard() {
       />
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard label="Active Requests" value="42" delta="+4 critical" trend="up" hint="6 awaiting verification" accent="crimson" />
-        <KpiCard label="Avg Response" value="4m 12s" delta="−12%" trend="down" hint="AI optimized" accent="intel" />
-        <KpiCard label="Match Rate" value="98.4%" delta="+2.1%" trend="up" hint="AI confident" accent="success" />
-        <KpiCard label="Donors Online" value="1,204" delta="live" hint="Geo telemetry" />
+        <KpiCard label="Active Requests" value="—" hint="Awaiting data" />
+        <KpiCard label="Avg Response" value="—" hint="Awaiting data" />
+        <KpiCard label="Match Rate" value="—" hint="Awaiting data" />
+        <KpiCard label="Donors Online" value="—" hint="Awaiting data" />
       </section>
 
       <section className="grid gap-3 md:grid-cols-3">
@@ -96,10 +95,8 @@ function Dashboard() {
             Open registry →
           </Link>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {donors.slice(0, 3).map((d) => (
-            <DonorCard key={d.id} d={d} />
-          ))}
+        <div className="rounded-xl border border-border bg-surface p-8 text-center text-sm text-muted-foreground">
+          No donor data available yet. Connect to the backend to populate the registry.
         </div>
       </section>
     </div>

@@ -5,7 +5,7 @@ export function getApiBaseUrl(): string {
   }
 
   const fromEnv = import.meta.env.VITE_BLOOD_DONATION_API_BASE_URL as string | undefined;
-  return (fromEnv ?? "http://localhost:8000").replace(/\/$/, "");
+  return (fromEnv ?? "https://blooddonationagenticsytembackend-production-280e.up.railway.app").replace(/\/$/, "");
 }
 
 export function apiUrl(path: string): string {

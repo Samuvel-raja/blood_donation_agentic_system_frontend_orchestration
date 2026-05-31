@@ -31,10 +31,10 @@ function RequestsPage() {
       />
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard label="Open requests" value="42" hint="6 critical" accent="crimson" />
-        <KpiCard label="Avg verify time" value="38s" delta="−12s" trend="down" hint="Hospital handshake" accent="intel" />
-        <KpiCard label="Fulfillment" value="89%" delta="+3.4%" trend="up" hint="Last 7 days" accent="success" />
-        <KpiCard label="Retry budget" value="2.1/3" hint="Per workflow" />
+        <KpiCard label="Open requests" value="—" hint="Awaiting data" />
+        <KpiCard label="Avg verify time" value="—" hint="Awaiting data" />
+        <KpiCard label="Fulfillment" value="—" hint="Awaiting data" />
+        <KpiCard label="Retry budget" value="—" hint="Awaiting data" />
       </section>
 
       <section className="space-y-4">

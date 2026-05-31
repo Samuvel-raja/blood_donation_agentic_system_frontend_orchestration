@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -7,6 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/layout/AppShell";
@@ -104,9 +106,39 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AuthenticatedApp />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+function AuthenticatedApp() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  const pathname = router.state.location.pathname;
+
+  useEffect(() => {
+    // Redirect unauthenticated users away from protected pages
+    if (!isAuthenticated && pathname !== "/login") {
+      router.navigate({ to: "/login", replace: true }).catch(() => {});
+    }
+
+    // Redirect authenticated users away from the login page
+    if (isAuthenticated && pathname === "/login") {
+      router.navigate({ to: "/", replace: true }).catch(() => {});
+    }
+  }, [isAuthenticated, pathname, router]);
+
+  // Show AppShell for authenticated users on protected routes
+  if (isAuthenticated) {
+    return (
       <AppShell>
         <Outlet />
       </AppShell>
-    </QueryClientProvider>
-  );
+    );
+  }
+
+  // Unauthenticated — render outlet only for /login
+  return pathname === "/login" ? <Outlet /> : null;
 }

@@ -8,12 +8,6 @@ import {
 } from "@/lib/api/blood-request";
 import { Loader2 } from "lucide-react";
 
-const HOSPITAL_PRESETS = [
-  { name: "Apollo Hospitals", address: "IIM, 154/11, Bannerghatta Rd, opposite Krishnaraju Layout, Amalodbhavi Naga, Panduranga Nagar, Bengaluru, Karnataka, 560076" },
-  { name: "St. Jude Medical Center", address: "88 Hope Blvd, Metro City" },
-  { name: "Oakwood Pediatric", address: "45 Oak Lane, Metro City" },
-] as const;
-
 type Props = {
   disabled?: boolean;
   onSubmit: (payload: BloodRequestPayload) => void | Promise<void>;
@@ -21,18 +15,12 @@ type Props = {
 
 export function NewEmergencyRequestForm({ disabled, onSubmit }: Props) {
   const [patientName, setPatientName] = useState("");
-  const [hospital, setHospital] = useState(HOSPITAL_PRESETS[0].name);
-  const [hospitalAddress, setHospitalAddress] = useState(HOSPITAL_PRESETS[0].address);
+  const [hospital, setHospital] = useState("");
+  const [hospitalAddress, setHospitalAddress] = useState("");
   const [bloodGroup, setBloodGroup] = useState<BloodGroup>("O-");
   const [quantity, setQuantity] = useState(6);
   const [status, setStatus] = useState<BloodRequestStatus>("SEARCHING");
   const [submitting, setSubmitting] = useState(false);
-
-  function applyHospitalPreset(name: string) {
-    const preset = HOSPITAL_PRESETS.find((h) => h.name === name);
-    setHospital(name);
-    if (preset) setHospitalAddress(preset.address);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,18 +65,14 @@ export function NewEmergencyRequestForm({ disabled, onSubmit }: Props) {
         </Field>
 
         <Field label="Hospital" required>
-          <select
+          <input
+            required
             value={hospital}
-            onChange={(e) => applyHospitalPreset(e.target.value)}
+            onChange={(e) => setHospital(e.target.value)}
+            placeholder="e.g. Mercy Central Hospital"
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             disabled={isDisabled}
-          >
-            {HOSPITAL_PRESETS.map((h) => (
-              <option key={h.name} value={h.name}>
-                {h.name}
-              </option>
-            ))}
-          </select>
+          />
         </Field>
 
         <Field label="Hospital address" required>

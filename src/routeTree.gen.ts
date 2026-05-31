@@ -13,6 +13,7 @@ import { Route as WorkflowsRouteImport } from './routes/workflows'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RequestsRouteImport } from './routes/requests'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as CommunicationsRouteImport } from './routes/communications'
 import { Route as AuditRouteImport } from './routes/audit'
@@ -37,6 +38,11 @@ const RequestsRoute = RequestsRouteImport.update({
 const MonitoringRoute = MonitoringRouteImport.update({
   id: '/monitoring',
   path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonorsRoute = DonorsRouteImport.update({
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuditRoute
   '/communications': typeof CommunicationsRoute
   '/donors': typeof DonorsRoute
+  '/login': typeof LoginRoute
   '/monitoring': typeof MonitoringRoute
   '/requests': typeof RequestsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/audit': typeof AuditRoute
   '/communications': typeof CommunicationsRoute
   '/donors': typeof DonorsRoute
+  '/login': typeof LoginRoute
   '/monitoring': typeof MonitoringRoute
   '/requests': typeof RequestsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/audit': typeof AuditRoute
   '/communications': typeof CommunicationsRoute
   '/donors': typeof DonorsRoute
+  '/login': typeof LoginRoute
   '/monitoring': typeof MonitoringRoute
   '/requests': typeof RequestsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/communications'
     | '/donors'
+    | '/login'
     | '/monitoring'
     | '/requests'
     | '/sitemap.xml'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/communications'
     | '/donors'
+    | '/login'
     | '/monitoring'
     | '/requests'
     | '/sitemap.xml'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/communications'
     | '/donors'
+    | '/login'
     | '/monitoring'
     | '/requests'
     | '/sitemap.xml'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   AuditRoute: typeof AuditRoute
   CommunicationsRoute: typeof CommunicationsRoute
   DonorsRoute: typeof DonorsRoute
+  LoginRoute: typeof LoginRoute
   MonitoringRoute: typeof MonitoringRoute
   RequestsRoute: typeof RequestsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/monitoring'
       fullPath: '/monitoring'
       preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donors': {
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditRoute: AuditRoute,
   CommunicationsRoute: CommunicationsRoute,
   DonorsRoute: DonorsRoute,
+  LoginRoute: LoginRoute,
   MonitoringRoute: MonitoringRoute,
   RequestsRoute: RequestsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

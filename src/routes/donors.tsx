@@ -48,10 +48,10 @@ function DonorsPage() {
       />
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <KpiCard label="Verified donors" value="12,481" delta="+82" trend="up" />
-        <KpiCard label="Avg reliability" value="86%" hint="AI weighted" accent="success" />
-        <KpiCard label="Response rate" value="79%" delta="+1.2%" trend="up" accent="intel" />
-        <KpiCard label="Eligible now" value="3,920" hint="Cooldown cleared" />
+        <KpiCard label="Verified donors" value="—" hint="Loading" />
+        <KpiCard label="Avg reliability" value="—" hint="Awaiting data" />
+        <KpiCard label="Response rate" value="—" hint="Awaiting data" />
+        <KpiCard label="Eligible now" value="—" hint="Awaiting data" />
       </section>
 
       <div className="flex flex-wrap items-center gap-2">

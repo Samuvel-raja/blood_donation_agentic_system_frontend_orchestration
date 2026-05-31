@@ -1,7 +1,36 @@
-import { Link } from "@tanstack/react-router";
-import { Bell, Command, Search } from "lucide-react";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth-context";
+import { useState, useRef, useEffect } from "react";
+import { Bell, Command, Search, LogOut, ChevronDown, User } from "lucide-react";
 
 export function TopBar() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
+
+  const initials = user?.name
+    ? user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "??";
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+    router.navigate({ to: "/login" }).catch(() => {});
+  };
+
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-background/60 px-4 backdrop-blur-md md:px-8">
       <div className="flex flex-1 items-center gap-3">
@@ -38,6 +67,46 @@ export function TopBar() {
         >
           + New Emergency
         </Link>
+
+        {/* User menu */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm transition-colors hover:bg-surface-elevated"
+          >
+            <div className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-crimson to-crimson-glow text-[10px] font-semibold text-white">
+              {initials}
+            </div>
+            <span className="hidden font-medium md:inline">{user?.name ?? "User"}</span>
+            <ChevronDown className="size-3.5 text-muted-foreground" />
+          </button>
+
+          {menuOpen ? (
+            <div className="absolute right-0 top-full z-50 mt-1.5 w-56 overflow-hidden rounded-xl border border-border bg-surface shadow-elevated animate-ticker">
+              <div className="border-b border-border px-4 py-3">
+                <p className="truncate text-sm font-medium">{user?.name}</p>
+                <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+              </div>
+              <div className="px-2 py-1.5">
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  disabled
+                >
+                  <User className="size-4" />
+                  Profile settings
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-crimson transition-colors hover:bg-crimson/10"
+                >
+                  <LogOut className="size-4" />
+                  Sign out
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
     </header>
   );

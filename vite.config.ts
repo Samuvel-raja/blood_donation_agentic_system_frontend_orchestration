@@ -11,7 +11,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 const apiProxyTarget =
   process.env.BLOOD_DONATION_API_BASE_URL ??
   process.env.VITE_BLOOD_DONATION_API_BASE_URL ??
-  "http://localhost:8000";
+  "https://blooddonationagenticsytembackend-production-280e.up.railway.app";
 
 export default defineConfig({
   tanstackStart: {
@@ -20,11 +20,19 @@ export default defineConfig({
   vite: {
     server: {
       proxy: {
+        "/auth": {
+          target: apiProxyTarget,
+          changeOrigin: true,
+        },
+        "/users": {
+          target: apiProxyTarget,
+          changeOrigin: true,
+        },
         "/blood-request": {
           target: apiProxyTarget,
           changeOrigin: true,
         },
-        "/usersbybloodgroup": {
+        "/webhooks": {
           target: apiProxyTarget,
           changeOrigin: true,
         },

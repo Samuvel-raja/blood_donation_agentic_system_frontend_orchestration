@@ -12,15 +12,6 @@ export type Donor = {
   email?: string;
 };
 
-export const donors: Donor[] = [
-  { id: "9942-X", name: "Marcus Thorne", initials: "MT", group: "O-", status: "available", roles: ["donor"] },
-  { id: "2210-Y", name: "Elena Rodriguez", initials: "ER", group: "O-", status: "available", roles: ["donor"] },
-  { id: "8821-K", name: "Samir Kapoor", initials: "SK", group: "AB+", status: "available", roles: ["donor"] },
-  { id: "4471-L", name: "Naomi Chen", initials: "NC", group: "B+", status: "available", roles: ["donor"] },
-  { id: "1093-Q", name: "Julian Vane", initials: "JV", group: "A-", status: "cooldown", roles: ["donor"] },
-  { id: "7758-D", name: "Priya Anand", initials: "PA", group: "O+", status: "available", roles: ["donor"] },
-];
-
 const statusDot: Record<Donor["status"], string> = {
   available: "bg-success",
   cooldown: "bg-muted-foreground/40",
@@ -95,22 +86,3 @@ function Chan({ icon: Icon }: { icon: any }) {
   );
 }
 
-function Stat({
-  label, value, bar, barColor = "intel", accent,
-}: {
-  label: string; value: string; bar?: number; barColor?: "intel" | "success"; accent?: "intel";
-}) {
-  return (
-    <div>
-      <p className="font-mono text-[9px] uppercase tracking-[0.15em] text-muted-foreground">{label}</p>
-      <p className={`mt-1 text-base font-semibold tabular-nums ${accent === "intel" ? "text-intel" : "text-foreground"}`}>
-        {value}
-      </p>
-      {typeof bar === "number" && (
-        <div className="mt-2 h-0.5 overflow-hidden rounded-full bg-muted">
-          <div className={`h-full ${barColor === "success" ? "bg-success" : "bg-intel"}`} style={{ width: `${bar}%` }} />
-        </div>
-      )}
-    </div>
-  );
-}
