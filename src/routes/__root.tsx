@@ -5,12 +5,9 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
 } from "@tanstack/react-router";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
 
-import appCss from "../styles.css?url";
 import { AppShell } from "@/components/layout/AppShell";
 
 function NotFoundComponent() {
@@ -68,39 +65,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PulseXira — AI Blood Donation Orchestration" },
-      { name: "description", content: "Enterprise AI command center for emergency blood logistics, donor orchestration, and real-time workflow telemetry." },
-      { name: "author", content: "PulseXira" },
-      { property: "og:title", content: "PulseXira — AI Blood Donation Orchestration" },
-      { property: "og:description", content: "Enterprise AI command center for emergency blood logistics and autonomous donor orchestration." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-    links: [{ rel: "stylesheet", href: appCss }],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
-
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className="dark">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

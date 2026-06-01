@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import type { UserProfile } from "@/lib/api/auth";
 
-// ── Types 
+// ── Types
 
 type Store = {
   token: string | null;
@@ -20,7 +20,6 @@ const TOKEN_KEY = "pulsexira_token";
 const USER_KEY = "pulsexira_user";
 
 function readFromStorage(): Store {
-  if (typeof window === "undefined") return { token: null, user: null };
   try {
     const token = localStorage.getItem(TOKEN_KEY);
     const user = localStorage.getItem(USER_KEY);
@@ -34,7 +33,6 @@ function readFromStorage(): Store {
 }
 
 function writeToStorage(token: string | null, user: UserProfile | null) {
-  if (typeof window === "undefined") return;
   if (token == null) {
     localStorage.removeItem(TOKEN_KEY);
   } else {
@@ -65,12 +63,6 @@ function getSnapshot(): Store {
   return store;
 }
 
-/** Called by React's SSR renderer to get the initial store value. */
-function getServerSnapshot(): Store {
-  // On the server there's no localStorage, so always return the default.
-  return { token: null, user: null };
-}
-
 // ── Context ──────────────────────────────────────────────────────────────
 
 const DEFAULT_VALUE: AuthContextValue = {
@@ -86,10 +78,9 @@ const AuthContext = createContext<AuthContextValue>(DEFAULT_VALUE);
 // ── Provider ─────────────────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { token, user } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const { token, user } = useSyncExternalStore(subscribe, getSnapshot);
 
-  // Hydrate from localStorage after mount so the first client render
-  // matches the server output, preventing hydration mismatches.
+  // Hydrate from localStorage after mount
   useEffect(() => {
     const stored = readFromStorage();
     if (stored.token !== store.token || stored.user !== store.user) {
