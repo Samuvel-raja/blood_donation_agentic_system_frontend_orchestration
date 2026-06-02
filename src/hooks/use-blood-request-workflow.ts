@@ -21,6 +21,14 @@ function stateToLog(state: BloodRequestWorkflowState): WorkflowLogEvent | null {
   if (state.error) {
     return { time: nowTime(), level: "err", tag: "API", message: state.error };
   }
+
+  const tag = state.current_node
+    ? state.current_node.toUpperCase().slice(0, 4)
+    : "NODE";
+
+  const statusMsg = state.status ? ` · status: ${state.status}` : "";
+  const nodeMsg = state.current_node ? `[${state.current_node}]` : "";
+
   if (state.status === "completed") {
     return {
       time: nowTime(),
@@ -29,23 +37,22 @@ function stateToLog(state: BloodRequestWorkflowState): WorkflowLogEvent | null {
       message: `Workflow completed · request ${state.request_id ?? "—"}`,
     };
   }
-  if (state.hospital_verification_data && "verified" in state.hospital_verification_data) {
-    const verified = Boolean(state.hospital_verification_data.verified);
+
+  if (state.current_node || state.status) {
+    const level =
+      state.status === "FAILED"
+        ? "err"
+        : state.status === "ASSIGNED"
+          ? "ok"
+          : "info";
     return {
       time: nowTime(),
-      level: verified ? "ok" : "warn",
-      tag: "VRF",
-      message: verified ? "Hospital verification passed" : "Hospital verification pending",
+      level,
+      tag,
+      message: `${nodeMsg}${statusMsg}${state.request_id ? ` · ${state.request_id}` : ""}`,
     };
   }
-  if (state.ranked_donors?.length) {
-    return {
-      time: nowTime(),
-      level: "ai",
-      tag: "AI",
-      message: `Donor search ranked ${state.ranked_donors.length} candidates`,
-    };
-  }
+
   if (state.request_id) {
     return {
       time: nowTime(),
@@ -54,8 +61,10 @@ function stateToLog(state: BloodRequestWorkflowState): WorkflowLogEvent | null {
       message: `Intake registered · ${state.request_id}`,
     };
   }
+
   return null;
 }
+
 
 export function useBloodRequestWorkflow() {
   const abortRef = useRef<AbortController | null>(null);

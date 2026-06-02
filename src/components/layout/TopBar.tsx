@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
 import { useState, useRef, useEffect } from "react";
 import { Bell, Command, Search, LogOut, ChevronDown, User } from "lucide-react";
@@ -60,13 +60,6 @@ export function TopBar() {
           <Bell className="size-4" />
           <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-crimson shadow-glow-crimson" />
         </button>
-
-        <Link
-          to="/workflows"
-          className="rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background transition-opacity hover:opacity-90"
-        >
-          + New Emergency
-        </Link>
 
         {/* User menu */}
         <div className="relative" ref={menuRef}>

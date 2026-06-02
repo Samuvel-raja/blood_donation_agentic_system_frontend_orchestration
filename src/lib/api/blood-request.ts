@@ -36,6 +36,7 @@ export type BloodRequestPayload = {
 export type BloodRequestWorkflowState = {
   request_id?: string;
   status?: string;
+  current_node?: string;
   route?: string;
   request_data?: Record<string, unknown>;
   hospital_verification_data?: Record<string, unknown>;

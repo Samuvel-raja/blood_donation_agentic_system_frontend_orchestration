@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { WorkflowGraph } from "@/components/shared/WorkflowGraph";
@@ -5,7 +6,14 @@ import { EventStream } from "@/components/shared/EventStream";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { NewEmergencyRequestForm } from "@/components/workflows/NewEmergencyRequestForm";
 import { useBloodRequestWorkflow } from "@/hooks/use-blood-request-workflow";
-import { Pause } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Pause, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/workflows")({
   head: () => ({
@@ -28,23 +36,52 @@ function WorkflowsPage() {
     cancel,
   } = useBloodRequestWorkflow();
 
+  const [showForm, setShowForm] = useState(false);
   const liveRequestId = workflowState?.request_id;
 
+  // Auto-close form once a run starts
+  useEffect(() => {
+    if (isRunning) setShowForm(false);
+  }, [isRunning]);
+
   return (
-    <div className="mx-auto max-w-[1600px] space-y-8 p-6 md:p-8">
+    <>
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>New Emergency Request</DialogTitle>
+            <DialogDescription>
+              Dispatch a new blood request through the orchestration pipeline.
+            </DialogDescription>
+          </DialogHeader>
+          <NewEmergencyRequestForm disabled={isRunning} onSubmit={startEmergencyRequest} />
+        </DialogContent>
+      </Dialog>
+
+      <div className="mx-auto max-w-[1600px] space-y-8 p-6 md:p-8">
       <PageHeader
         eyebrow="Orchestration engine"
         title="Workflow Visualizer"
         description="Create emergency requests and watch live LangGraph execution."
         actions={
-          <button
-            type="button"
-            onClick={cancel}
-            disabled={!isRunning}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-40"
-          >
-            <Pause className="size-3.5" /> Interrupt run
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              disabled={isRunning}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-40"
+            >
+              <Plus className="size-3.5" /> New Emergency
+            </button>
+            <button
+              type="button"
+              onClick={cancel}
+              disabled={!isRunning}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border bg-surface px-3 py-1.5 text-xs font-medium hover:bg-accent disabled:opacity-40"
+            >
+              <Pause className="size-3.5" /> Interrupt run
+            </button>
+          </>
         }
       />
 
@@ -90,13 +127,12 @@ function WorkflowsPage() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-sm font-semibold tracking-tight">New Emergency Request</h2>
-          <NewEmergencyRequestForm disabled={isRunning} onSubmit={startEmergencyRequest} />
           <div className="h-[320px]">
             <EventStream title="Execution Log" events={events.length ? events : undefined} />
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }
